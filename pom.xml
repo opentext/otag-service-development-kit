@@ -109,6 +109,21 @@
         </plugins>
     </build>
 
+    <developers>
+        <developer>
+            <name>Rhys Evans</name>
+            <email>rhyse@opentext.com</email>
+            <organization>Open Text</organization>
+            <organizationUrl>http://www.opentext.com/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:opentext/otag-service-development-kit.git</connection>
+        <developerConnection>scm:git:git@github.com:opentext/otag-service-development-kit.git</developerConnection>
+        <url>git@github.com:opentext/otag-service-development-kit.git</url>
+    </scm>
+
     <dependencies>
 
         <!-- We expect developers to include this dependency themselves as a separate Jar
