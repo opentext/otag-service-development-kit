@@ -112,8 +112,12 @@
 
     <licenses>
         <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>Open Text End User License Agreement</name>
+            <url>https://developer.opentext.com/awd/resources/articles/15235159/end+user+software+license+agreement+for+open+text+corporation+software</url>
+        </license>
+        <license>
+            <name>Trial Use Agreement</name>
+            <url>https://developer.opentext.com/awd/resources/articles/15235173/trial+use+agreement</url>
         </license>
     </licenses>
 
