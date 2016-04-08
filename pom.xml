@@ -17,8 +17,7 @@
         deployment API, which is a limited subset of the full AppWorks admin API.
 
         We currently provide the facility for services to listen to service life-cycle events such as 'service
-        installed', 'service upgraded' and 'service uninstalled'. Initialization, clean up and service state
-        changes can be managed easily by providing an implementation of
+        installed', 'service upgraded' and 'service uninstalled'.
 
         We also provide the facility for centralised configuration setting management. As AppWorks services
         are edited from the AppWork Gateway administration console, we provide the ability to respond to
