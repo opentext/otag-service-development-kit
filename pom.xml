@@ -24,6 +24,8 @@
         updates made here, and also expose creation and update end points for these settings.
     </description>
 
+    <url>https://github.com/opentext/otag-service-development-kit</url>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.6.2</jackson.version>
