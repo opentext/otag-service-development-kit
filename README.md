@@ -1,4 +1,4 @@
-# Open Text AppWorks service development kit (SDK)
+# Open Text AppWorks service development kit
 
 The SDK provides access to the set of utility classes required to interact with an instance of an AppWorks Gateway from an AppWorks Service. It covers AppWorks dedicated service deployment API, which is a limited subset of the full AppWorks admin API.
 
