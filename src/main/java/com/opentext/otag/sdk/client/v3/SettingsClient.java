@@ -114,16 +114,26 @@ public class SettingsClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public SDKResponse updateSetting(Setting setting) throws APIException {
-        String registerUrl = getManagementPath(appName) + setting.getKey();
-        WebTarget target = getTarget(registerUrl);
+        String updateSettingUrl = getManagementPath(appName) + setting.getKey();
+        WebTarget target = getTarget(updateSettingUrl);
         Entity<Setting> settingEntity = Entity.entity(setting, MediaType.APPLICATION_JSON_TYPE);
 
         MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
         try {
-            return processGenericPost(registerUrl, target, settingEntity, requestHeaders);
+            Response response = target.request()
+                    .headers(requestHeaders)
+                    .put(settingEntity);
+
+            int responseStatus = response.getStatus();
+            String responseBody = response.readEntity(String.class);
+            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
+            validateResponse(updateSettingUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
+
+            return new SDKResponse(true, new SDKCallInfo(updateSettingUrl, requestHeaders, responseStatus,
+                    responseHeaders, responseBody));
         } catch (Exception e) {
             LOG.error("Failed to update setting " + setting.getKey() + ", " + e.getMessage(), e);
-            throw processFailureResponse(registerUrl, requestHeaders, e);
+            throw processFailureResponse(updateSettingUrl, requestHeaders, e);
         }
 
     }
