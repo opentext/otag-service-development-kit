@@ -13,7 +13,7 @@ import java.util.Set;
  * at a time.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public interface MultiSettingChangeHandler extends OtagMessageHandler<SettingsChangeMessage> {
 

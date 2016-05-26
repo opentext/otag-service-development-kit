@@ -16,7 +16,7 @@ import org.apache.juli.logging.LogFactory;
  * automatically when any AppWorks service is deployed.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class OtagUrlUpdateHandler extends AbstractSettingChangeHandler {
 

@@ -10,7 +10,7 @@ import javax.ws.rs.core.MultivaluedMap;
  * Retains information regarding an SDK call.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class SDKCallInfo {
 
@@ -48,7 +48,6 @@ public class SDKCallInfo {
      * The Gateway may include a human readable error message in a failure response.
      */
     private String errorMessage;
-
 
     /**
      * Exception thrown in response to call.

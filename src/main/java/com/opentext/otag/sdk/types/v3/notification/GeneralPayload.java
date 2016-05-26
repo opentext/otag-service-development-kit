@@ -16,7 +16,7 @@ import java.util.Map;
  * push notification service.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class GeneralPayload implements Serializable {
 

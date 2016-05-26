@@ -15,7 +15,7 @@ import java.util.Set;
  * Gateway's administration console(provider key updates, etc...).
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class EimConnectorUpdateMessage extends OtagMessageImpl {
 

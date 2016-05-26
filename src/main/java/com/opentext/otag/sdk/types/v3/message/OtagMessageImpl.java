@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Message from AppWorks Gateway to a deployed managed AppWorks service.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public abstract class OtagMessageImpl implements OtagMessage, Serializable {
 

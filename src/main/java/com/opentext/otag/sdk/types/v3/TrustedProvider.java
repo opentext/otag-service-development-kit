@@ -11,7 +11,7 @@ import java.io.Serializable;
  * be used with a sub section of the Gateways API's.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class TrustedProvider extends SDKType implements Serializable {
 

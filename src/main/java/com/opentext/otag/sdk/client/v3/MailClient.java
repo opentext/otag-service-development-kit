@@ -26,7 +26,7 @@ import java.util.concurrent.Future;
  * Mail API Service client that exposes the Gateways email sending functionality.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class MailClient extends AbstractOtagServiceClient {
 

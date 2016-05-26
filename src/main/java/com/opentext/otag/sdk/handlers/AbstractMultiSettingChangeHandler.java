@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * a {@link SettingsChangeMessage}.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  *
  * @see SettingsChangeMessage
  */

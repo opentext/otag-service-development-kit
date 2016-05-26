@@ -15,7 +15,7 @@ import java.util.Set;
  * Setting entry in the Gateway's database they might be interested in.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class SettingsChangeMessage extends OtagMessageImpl {
 

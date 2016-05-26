@@ -29,7 +29,7 @@ import java.util.List;
  * config made via the AppWorks administration UI.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class SettingsClient extends AbstractOtagServiceClient {
 
@@ -253,6 +253,38 @@ public class SettingsClient extends AbstractOtagServiceClient {
         }
 
         return null;
+    }
+
+    /**
+     * Remove a setting via its key. Only settings that belong to the app/service
+     * making this call can be removed in this way.
+     *
+     * @param settingKey the unique configuration setting id
+     * @return sdk response with a success indicator, true if the removal succeeds
+     * @throws APIException if a non 200 response is received
+     */
+    public SDKResponse removeSetting(String settingKey) throws APIException {
+        String removeSettingUrl = getManagementPath(appName) + settingKey;
+        WebTarget target = getTarget(removeSettingUrl);
+
+        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
+        try {
+            Response response = target.request()
+                    .headers(requestHeaders)
+                    .delete();
+
+            int responseStatus = response.getStatus();
+            String responseBody = response.readEntity(String.class);
+            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
+            validateResponse(removeSettingUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
+
+            return new SDKResponse(true, new SDKCallInfo(
+                    removeSettingUrl, requestHeaders, responseStatus,
+                    responseHeaders, responseBody));
+        } catch (Exception e) {
+            LOG.error("Failed to remove setting " + settingKey + ", " + e.getMessage(), e);
+            throw processFailureResponse(removeSettingUrl, requestHeaders, e);
+        }
     }
 
     private String getManagementPath(String appName) {

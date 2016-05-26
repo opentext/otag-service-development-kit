@@ -12,7 +12,7 @@ import java.util.List;
  * Request that allows an email be sent to a number of recipients.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class MailRequest implements Serializable {
 

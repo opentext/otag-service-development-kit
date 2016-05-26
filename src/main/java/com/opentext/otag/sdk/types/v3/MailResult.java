@@ -13,7 +13,7 @@ import java.util.List;
  * Returned by the AppWorks Gateway in response to a mail request.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class MailResult extends SDKType implements Serializable {
 

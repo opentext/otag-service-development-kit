@@ -32,7 +32,7 @@ import java.util.Objects;
  * know about, and to register {@link AuthRequestHandler}s if your service contains any.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  *
  * @see com.opentext.otag.sdk.handlers.AuthRequestHandler
  */

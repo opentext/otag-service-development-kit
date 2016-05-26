@@ -16,7 +16,7 @@ import java.util.Map;
  * profile across our auth providers.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserProfile extends SDKType {

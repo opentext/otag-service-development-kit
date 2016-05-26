@@ -15,7 +15,7 @@ import java.util.HashMap;
  * OTDS profile, our base Gateway profile.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.0
+ * @version 16.0.1
  */
 public class OtdsUserProfile extends UserProfile {
 
