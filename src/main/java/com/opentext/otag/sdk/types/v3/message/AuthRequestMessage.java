@@ -34,7 +34,7 @@ public class AuthRequestMessage extends OtagMessageImpl {
 
     private String username;
     private String password;
-    private String otdsTicket;
+    private String authToken;
     private ForwardHeaders forwardHeaders;
     private ClientRepresentation clientData;
 
@@ -67,7 +67,7 @@ public class AuthRequestMessage extends OtagMessageImpl {
                                                     ClientRepresentation clientData) {
         AuthRequestMessage message = new AuthRequestMessage(otagServiceEvent);
         message.handlerName = handlerName;
-        message.otdsTicket = authToken;
+        message.authToken = authToken;
         message.forwardHeaders = forwardHeaders;
         message.clientData = clientData;
         return message;
@@ -91,7 +91,7 @@ public class AuthRequestMessage extends OtagMessageImpl {
                                                     ForwardHeaders forwardHeaders,
                                                     ClientRepresentation clientData) {
         AuthRequestMessage message = new AuthRequestMessage(otagServiceEvent);
-        message.otdsTicket = authToken;
+        message.authToken = authToken;
         message.forwardHeaders = forwardHeaders;
         message.clientData = clientData;
         return message;
@@ -99,7 +99,7 @@ public class AuthRequestMessage extends OtagMessageImpl {
 
     @JsonIgnore
     public boolean hasAuthToken() {
-        return getOtdsTicket() != null;
+        return getAuthToken() != null;
     }
 
     @JsonIgnore
@@ -126,8 +126,8 @@ public class AuthRequestMessage extends OtagMessageImpl {
         return password;
     }
 
-    public String getOtdsTicket() {
-        return otdsTicket;
+    public String getAuthToken() {
+        return authToken;
     }
 
     public ForwardHeaders getForwardHeaders() {
