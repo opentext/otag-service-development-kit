@@ -54,7 +54,7 @@ public class RuntimesClient extends AbstractOtagServiceClient {
      * @return a list of runtimes, client applications that use the Gateway
      * @throws APIException if a non 200 response is received
      */
-    public Runtimes getAllRuntimes() throws APIException {
+    public Runtimes getAllRuntimes() {
         String getAllUrl = getManagementPath(appName);
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getAllUrl))

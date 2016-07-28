@@ -58,7 +58,7 @@ public class AuthClient extends AbstractOtagServiceClient {
      * @return a user
      * @throws APIException if a non 200 response is received
      */
-    public AuthorizedUser getUserForToken(String otagToken) throws APIException {
+    public AuthorizedUser getUserForToken(String otagToken) {
         String getUrl = getManagementPath(appName) + "user";
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getUrl))
@@ -96,7 +96,7 @@ public class AuthClient extends AbstractOtagServiceClient {
      * @return group ids or an empty list if we fail
      * @throws APIException if a non 200 response is received
      */
-    public UserGroupIdList getUsersGroupIds(User user) throws APIException {
+    public UserGroupIdList getUsersGroupIds(User user) {
         Objects.requireNonNull(user);
         Objects.requireNonNull(user.getUserName());
 
@@ -133,7 +133,7 @@ public class AuthClient extends AbstractOtagServiceClient {
      * @return a user profile is one is found, or null if the request fails or no such user exists
      * @throws APIException if a non 200 response is received
      */
-    public UserProfile getUserProfie(String userName) throws APIException {
+    public UserProfile getUserProfie(String userName) {
         String getUrl = getManagementPath(appName) + "users/" + userName + "/profile";
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getUrl))
@@ -173,7 +173,7 @@ public class AuthClient extends AbstractOtagServiceClient {
      *
      * @see com.opentext.otag.sdk.handlers.AuthRequestHandler
      */
-    public SDKResponse registerAuthHandlers(RegisterAuthHandlersRequest request) throws APIException {
+    public SDKResponse registerAuthHandlers(RegisterAuthHandlersRequest request) {
         String registerUrl = getManagementPath(appName) + "handlers";
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(registerUrl))

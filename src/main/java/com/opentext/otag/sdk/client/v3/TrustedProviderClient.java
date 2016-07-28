@@ -49,7 +49,7 @@ public class TrustedProviderClient extends AbstractOtagServiceClient {
      * @return a list of trusted servers, including their keys and contact info
      * @throws APIException if a non 200 response is received
      */
-    public TrustedProviders getAllProviders() throws APIException {
+    public TrustedProviders getAllProviders() {
         String getAllUrl = getManagementPath(appName);
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getAllUrl))
@@ -85,7 +85,7 @@ public class TrustedProviderClient extends AbstractOtagServiceClient {
      * @return the trusted provider representation of null if no provider is found
      * @throws APIException if a non 200 response is received
      */
-    public TrustedProvider getOrCreate(String name) throws APIException {
+    public TrustedProvider getOrCreate(String name) {
         String getByNameUrl = getManagementPath(appName) + name;
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getByNameUrl))

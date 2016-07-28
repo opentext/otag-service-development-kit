@@ -58,7 +58,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
      * @see SettingChangeHandler
      * @see AbstractSettingChangeHandler
      */
-    public SDKResponse registerForUpdates(String settingKey) throws APIException {
+    public SDKResponse registerForUpdates(String settingKey) {
         String registerUrl = getManagementPath(appName) + settingKey + "/listeners";
         WebTarget target = getTarget(registerUrl);
 
@@ -89,7 +89,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
      * @return sdk response with a success indicator, true if the new Setting was stored, false otherwise
      * @throws APIException if a non 200 response is received
      */
-    public SDKResponse createSetting(Setting setting) throws APIException {
+    public SDKResponse createSetting(Setting setting) {
         String registerUrl = getManagementPath(appName) + setting.getKey();
         WebTarget target = getTarget(registerUrl);
 
@@ -113,7 +113,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
      * @return sdk response with a success indicator, true if the update succeeds
      * @throws APIException if a non 200 response is received
      */
-    public SDKResponse updateSetting(Setting setting) throws APIException {
+    public SDKResponse updateSetting(Setting setting) {
         String updateSettingUrl = getManagementPath(appName) + setting.getKey();
         WebTarget target = getTarget(updateSettingUrl);
         Entity<Setting> settingEntity = Entity.entity(setting, MediaType.APPLICATION_JSON_TYPE);
@@ -144,7 +144,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
      * @return A collection of Settings.
      * @throws APIException if a non 200 response is received
      */
-    public Settings getSettings() throws APIException {
+    public Settings getSettings() {
         String getUrl = getManagementPath(appName);
         WebTarget target = getTarget(getUrl);
 
@@ -178,7 +178,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
      * @return a Setting, or null if no Setting was found for the supplied identifier
      * @throws APIException if a non 200 response is received
      */
-    public Setting getSetting(String settingKey) throws APIException {
+    public Setting getSetting(String settingKey) {
         String getUrl = getManagementPath(appName) + settingKey;
         WebTarget target = getTarget(getUrl);
 
@@ -205,7 +205,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
         }
     }
 
-    public String getSettingAsString(String settingKey) throws APIException {
+    public String getSettingAsString(String settingKey) {
         Setting setting = getSetting(settingKey);
         if (setting != null)
             return setting.getValue();
@@ -213,7 +213,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
         return null;
     }
 
-    public Integer getSettingAsInt(String settingKey) throws APIException {
+    public Integer getSettingAsInt(String settingKey) {
         Setting setting = getSetting(settingKey);
         if (setting != null) {
             try {
@@ -227,7 +227,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
         return null;
     }
 
-    public Long getSettingAsLong(String settingKey) throws APIException {
+    public Long getSettingAsLong(String settingKey) {
         Setting setting = getSetting(settingKey);
         if (setting != null) {
             try {
@@ -241,7 +241,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
         return null;
     }
 
-    public Boolean getSettingAsBool(String settingKey) throws APIException {
+    public Boolean getSettingAsBool(String settingKey) {
         Setting setting = getSetting(settingKey);
         if (setting != null) {
             try {
@@ -263,7 +263,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
      * @return sdk response with a success indicator, true if the removal succeeds
      * @throws APIException if a non 200 response is received
      */
-    public SDKResponse removeSetting(String settingKey) throws APIException {
+    public SDKResponse removeSetting(String settingKey) {
         String removeSettingUrl = getManagementPath(appName) + settingKey;
         WebTarget target = getTarget(removeSettingUrl);
 

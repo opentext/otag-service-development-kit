@@ -12,7 +12,7 @@ import com.opentext.otag.sdk.util.StringUtil;
  * @author Rhys Evans rhyse@opentext.com
  * @version 16.0.1
  */
-public class APIException extends Exception {
+public class APIException extends RuntimeException {
 
     private SDKCallInfo callInfo;
 

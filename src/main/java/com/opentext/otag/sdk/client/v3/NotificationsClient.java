@@ -55,7 +55,7 @@ public class NotificationsClient extends AbstractOtagServiceClient {
      * @return true if the request was successful, false otherwise
      * @throws APIException if a non 200 response is received
      */
-    public SDKResponse sendPushNotification(ClientPushNotificationRequest notificationRequest) throws APIException {
+    public SDKResponse sendPushNotification(ClientPushNotificationRequest notificationRequest) {
         String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName + "/push";
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(requestUrl))
@@ -83,7 +83,7 @@ public class NotificationsClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     @Deprecated
-    public SDKResponse sendNotification(NotificationRequest notificationRequest) throws APIException {
+    public SDKResponse sendNotification(NotificationRequest notificationRequest) {
         String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName;
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(requestUrl))

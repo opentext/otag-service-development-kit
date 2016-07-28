@@ -177,7 +177,7 @@ public class AbstractOtagServiceClient {
 
     public APIException processFailureResponse(String url,
                                                MultivaluedMap<String, Object> requestHeaders,
-                                               Exception exception) throws APIException {
+                                               Exception exception) {
         if (exception instanceof APIException) throw (APIException) exception;
 
         return processErrorResponse(url, requestHeaders, -1, null, null, exception);
@@ -222,7 +222,7 @@ public class AbstractOtagServiceClient {
     protected <T> SDKResponse processGenericPost(String requestUrl,
                                                  WebTarget target,
                                                  Entity<T> requestEntity,
-                                                 MultivaluedMap<String, Object> requestHeaders) throws APIException {
+                                                 MultivaluedMap<String, Object> requestHeaders) {
         Response response = target.request()
                 .headers(requestHeaders)
                 .post(requestEntity);
@@ -238,7 +238,7 @@ public class AbstractOtagServiceClient {
 
     protected void validateResponse(String requestUrl, MultivaluedMap<String, Object> requestHeaders,
                                     int responseStatus, String responseBody,
-                                    MultivaluedMap<String, Object> responseHeaders) throws APIException {
+                                    MultivaluedMap<String, Object> responseHeaders) {
         if (isErrorStatus(responseStatus))
             throw processFailureResponse(requestUrl, requestHeaders, responseStatus,
                     responseBody, responseHeaders);

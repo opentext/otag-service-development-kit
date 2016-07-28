@@ -52,7 +52,7 @@ public class MailClient extends AbstractOtagServiceClient {
      *         mail was not sent by the Gateway)
      * @throws APIException if a non 200 response is received
      */
-    public SDKResponse sendMailAsync(MailRequest mailRequest) throws APIException {
+    public SDKResponse sendMailAsync(MailRequest mailRequest) {
 
         String mailUrl = getManagingOtagUrl() + MAIL_SERVICE_PATH + appName + "/send";
 
@@ -89,7 +89,7 @@ public class MailClient extends AbstractOtagServiceClient {
      *
      * @see MailRequest
      */
-    public MailResult sendMail(MailRequest mailRequest) throws APIException {
+    public MailResult sendMail(MailRequest mailRequest) {
         String mailUrl = getManagingOtagUrl() + MAIL_SERVICE_PATH + appName + "/important/send";
 
         WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(mailUrl))

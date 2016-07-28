@@ -55,7 +55,7 @@ public class ServiceClient extends AbstractOtagServiceClient {
      * with our managing Gateway
      * @throws APIException if a non 200 response is received
      */
-    public SDKResponse completeDeployment(DeploymentResult deploymentResult) throws APIException {
+    public SDKResponse completeDeployment(DeploymentResult deploymentResult) {
         String registerUrl = getManagingOtagUrl() + OTAG_DEPLOYMENTS_SERVICE_PATH + "manage/" +
                 appName + "/status";
 
@@ -81,7 +81,7 @@ public class ServiceClient extends AbstractOtagServiceClient {
      * @return list of EIM Connectors, including info on how to use the connection
      * @throws APIException if a non 200 response is received
      */
-    public EIMConnectors getEIMConnectors() throws APIException {
+    public EIMConnectors getEIMConnectors() {
         String getConnectorsUrl = getManagingOtagUrl() + OTAG_DEPLOYMENTS_SERVICE_PATH + "manage/" +
                 appName + "/eimconnectors";
 
@@ -120,7 +120,7 @@ public class ServiceClient extends AbstractOtagServiceClient {
      * @return sdk response with a success indicator, true if registration succeeded, false otherwise
      * @throws APIException if a non 200 response is received
      */
-    public SDKResponse registerConnector(EIMConnector eimConnector) throws APIException {
+    public SDKResponse registerConnector(EIMConnector eimConnector) {
         Objects.requireNonNull(eimConnector);
         String getConnectorsUrl = getManagingOtagUrl() + OTAG_DEPLOYMENTS_SERVICE_PATH + "manage/" +
                 appName + "/eimconnectors";

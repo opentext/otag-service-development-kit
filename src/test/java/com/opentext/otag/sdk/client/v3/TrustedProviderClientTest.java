@@ -41,7 +41,7 @@ public class TrustedProviderClientTest {
      * to unit test a service independently .
      */
     @Test
-    public void testGetAllProviders() throws APIException, JsonProcessingException {
+    public void testGetAllProviders() throws JsonProcessingException {
         TomcatLifecycleListener.setStarted();
 
         List<TrustedProvider> providers = Arrays.asList(
@@ -74,7 +74,7 @@ public class TrustedProviderClientTest {
 
     // test exception resolution
     @Test
-    public void testGetAllProviders_throw500() throws APIException, JsonProcessingException {
+    public void testGetAllProviders_throw500() throws JsonProcessingException {
         TomcatLifecycleListener.setStarted();
 
         String errorKey = "ErrorKey";
