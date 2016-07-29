@@ -47,7 +47,8 @@ public class AuthClient extends AbstractOtagServiceClient {
     }
 
     public AuthClient(Client restClient, AWConfigFactory configurationLoaderFactory) {
-        // testing constructor
+        // testing constructor, allows a custom AWConfigFactory to be passed
+        // to a client under test, avoiding the bootstrapping which involves IO
         super(restClient, configurationLoaderFactory);
     }
 
