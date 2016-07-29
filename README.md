@@ -1,8 +1,8 @@
 # Open Text AppWorks service development kit
 
-The SDK provides access to the set of utility classes required to interact with an instance of an AppWorks Gateway from an AppWorks Service. It covers AppWorks dedicated service deployment API, which is a limited subset of the full AppWorks administration API.
+The service development kit (SDK) provides access to the set of utility classes required to interact with an instance of an AppWorks Gateway from an AppWorks Service. It covers AppWorks dedicated service deployment API, which is a limited subset of the full AppWorks administration API.
 
-It currently provides the following features:
+The SDK currently provides the following features:
 
 - Full set of REST clients for working with the AppWorks Gateway's deployments API
 - Centralised configuration setting management (creation, update, handling changes from the AppWorks Gateway console)
