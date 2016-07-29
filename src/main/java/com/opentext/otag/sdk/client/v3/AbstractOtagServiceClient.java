@@ -41,7 +41,6 @@ import java.util.List;
  *
  * @author Rhys Evans rhyse@opentext.com
  * @version 16.0.1
- *
  * @see AWConfig
  */
 public class AbstractOtagServiceClient {
@@ -288,10 +287,12 @@ public class AbstractOtagServiceClient {
         callInfo.setException(exception);
 
         try {
-            ErrorResponseWrapper errorResponseWrapper = getMapper().readValue(responseBody, ErrorResponseWrapper.class);
-            if (errorResponseWrapper != null) {
-                callInfo.setErrorCode(errorResponseWrapper.getKey());
-                callInfo.setErrorMessage(errorResponseWrapper.getErrorMessage());
+            if (responseBody != null) {
+                ErrorResponseWrapper errorResponseWrapper = getMapper().readValue(responseBody, ErrorResponseWrapper.class);
+                if (errorResponseWrapper != null) {
+                    callInfo.setErrorCode(errorResponseWrapper.getKey());
+                    callInfo.setErrorMessage(errorResponseWrapper.getErrorMessage());
+                }
             }
         } catch (IOException ignore) {
             // we may not have a sensible
