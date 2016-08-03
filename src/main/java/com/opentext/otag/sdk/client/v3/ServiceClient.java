@@ -30,7 +30,7 @@ import java.util.Objects;
  * and registration of EIM Connectors.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  */
 public class ServiceClient extends AbstractOtagServiceClient {
 

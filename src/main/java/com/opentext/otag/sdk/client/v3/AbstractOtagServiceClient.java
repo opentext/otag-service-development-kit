@@ -40,7 +40,7 @@ import java.util.List;
  * JAX-RS {@link Client}, and use the Jackson library for JSON marshalling.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  * @see AWConfig
  */
 public class AbstractOtagServiceClient {

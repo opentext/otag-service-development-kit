@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * some type, its up the service itself to decide this.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  *
  * @see com.opentext.otag.sdk.types.v3.management.DeploymentResult
  * @see ServiceClient#completeDeployment(DeploymentResult)

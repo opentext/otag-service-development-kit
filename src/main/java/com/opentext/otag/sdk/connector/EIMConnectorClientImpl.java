@@ -23,7 +23,7 @@ import java.util.List;
  * shared connection to some Open Text back-end server/system.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  *
  * @see EIMConnectorService
  */

@@ -10,7 +10,7 @@ import com.opentext.otag.service.context.components.AWComponent;
  * AppWorks service safely.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  */
 public interface AWServiceContextHandler extends AWComponent {
 

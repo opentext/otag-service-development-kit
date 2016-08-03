@@ -10,7 +10,7 @@ import com.opentext.otag.sdk.util.StringUtil;
  * Error response wrapper.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  */
 public class APIException extends RuntimeException {
 

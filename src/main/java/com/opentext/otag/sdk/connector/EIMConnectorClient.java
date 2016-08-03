@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Type that manages a connection to a specific {@link EIMConnector}.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  *
  * @see EIMConnector
  */

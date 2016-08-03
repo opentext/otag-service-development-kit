@@ -12,7 +12,7 @@ import java.util.List;
  * it finds in the deployed service it is managing.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1
+ * @version 16.0.1.1
  */
 public class RegisterAuthHandlersRequest implements Serializable {
 
