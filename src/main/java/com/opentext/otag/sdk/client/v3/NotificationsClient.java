@@ -131,7 +131,7 @@ public class NotificationsClient extends AbstractOtagServiceClient {
 
             validateResponse(requestUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
 
-            return response.readEntity(NotificationSeqBounds.class);
+            return getMapper().readValue(responseBody, NotificationSeqBounds.class);
         } catch (Exception e) {
             LOG.error("Failed to get notification min/max seq", e);
             return null;
