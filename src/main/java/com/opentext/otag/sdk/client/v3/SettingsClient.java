@@ -200,7 +200,8 @@ public class SettingsClient extends AbstractOtagServiceClient {
             setting.setSdkCallInfo(callInfo);
             return setting;
         } catch (Exception e) {
-            LOG.error("Failed to retrieve setting", e);
+            if (LOG.isDebugEnabled())
+                LOG.debug("Failed to retrieve setting", e);
             throw processFailureResponse(getUrl, requestHeaders, e);
         }
     }
