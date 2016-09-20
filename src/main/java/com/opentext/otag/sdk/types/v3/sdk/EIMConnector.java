@@ -44,10 +44,19 @@ public class EIMConnector extends SDKType implements Serializable {
     private String connectionUrlSettingKey;
 
     /**
+     * Trusted provider name. This is the unique (within a Gateway instance) Trusted Provider Id. When
+     * used in conjunction with its API key that can be used with a limited set of the Gateways
+     * administration REST API endpoints.
+     *
+     * @see TrustedProvider#getName()
+     */
+    private String providerName;
+
+    /**
      * Trusted provider key. Gateway API key that can be used with a limited set of the Gateways
      * administration REST API endpoints.
      *
-     * @see TrustedProvider
+     * @see TrustedProvider#getKey()
      */
     private String providerKey;
 
@@ -56,11 +65,13 @@ public class EIMConnector extends SDKType implements Serializable {
 
     // we don't retain the proxy settings associated with the connector at the Gateway
     public EIMConnector(String connectorName, String connectorVersion,
-                        String connectionUrl, String urlSettingsKey, String providerKey) {
+                        String connectionUrl, String urlSettingsKey,
+                        String providerName, String providerKey) {
         this.connectorName = connectorName;
         this.connectorVersion = connectorVersion;
         this.connectionUrl = connectionUrl;
         this.connectionUrlSettingKey = urlSettingsKey;
+        this.providerName = providerName;
         this.providerKey = providerKey;
     }
 
@@ -86,6 +97,10 @@ public class EIMConnector extends SDKType implements Serializable {
 
     public String getConnectionUrlSettingKey() {
         return connectionUrlSettingKey;
+    }
+
+    public String getProviderName() {
+        return providerName;
     }
 
     public String getProviderKey() {
@@ -120,6 +135,7 @@ public class EIMConnector extends SDKType implements Serializable {
                 ", connectorVersion='" + connectorVersion + '\'' +
                 ", connectionUrl='" + connectionUrl + '\'' +
                 ", connectionUrlSettingKey='" + connectionUrlSettingKey + '\'' +
+                ", providerName='" + providerName + '\'' +
                 ", providerKey='" + providerKey + '\'' +
                 ", sdkCallInfo='" +  getSdkCallInfo() + '\'' +
                 '}';
