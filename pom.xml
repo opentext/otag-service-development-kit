@@ -7,7 +7,7 @@
 
     <groupId>com.opentext.otag.sdk</groupId>
     <artifactId>otag-service-development-kit</artifactId>
-    <version>16.0.1.1</version>
+    <version>16.1</version>
     <packaging>jar</packaging>
 
     <name>Open Text AppWorks Gateway Service Developer Kit (SDK)</name>
@@ -29,8 +29,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.6.2</jackson.version>
-        <appworks.platform.version>16.0.1.1</appworks.platform.version>
-        <fortify.project.version>16.0.1.1</fortify.project.version>
+        <appworks.platform.version>16.1</appworks.platform.version>
+        <fortify.project.version>16.1</fortify.project.version>
         <fortify.auth.token>auth-token-here</fortify.auth.token>
         <fortify.ssc.url>http://host:port/ssc</fortify.ssc.url>
         <fortify.results.file>

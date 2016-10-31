@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * passed to the Gateway in a auth handler registration request.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  *
  * @see RegisterAuthHandlersRequest
  */

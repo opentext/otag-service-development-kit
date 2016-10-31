@@ -12,7 +12,7 @@ import com.opentext.otag.sdk.types.v3.message.LifecycleChangeMessage;
  * an administrator who performs those actions via the UI (usually) or REST API.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public interface LifecycleCallbackHandler extends OtagMessageHandler<LifecycleChangeMessage> {
 

@@ -12,7 +12,7 @@ import java.io.Serializable;
  * or by an AppWorks service.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public class Setting extends SDKType implements Serializable {
 

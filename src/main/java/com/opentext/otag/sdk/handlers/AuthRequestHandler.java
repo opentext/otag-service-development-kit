@@ -25,7 +25,7 @@ import java.util.Set;
  * decorate auth responses when they are not being used as the Gateway's primary auth handler.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public interface AuthRequestHandler extends OtagMessageHandler<AuthRequestMessage> {
 

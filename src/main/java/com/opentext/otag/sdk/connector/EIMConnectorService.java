@@ -25,7 +25,7 @@ import com.opentext.otag.service.context.components.AWComponent;
  * </ul>
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public interface EIMConnectorService extends AWComponent {
 

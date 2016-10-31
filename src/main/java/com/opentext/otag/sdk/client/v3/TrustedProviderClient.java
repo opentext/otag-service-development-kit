@@ -26,7 +26,7 @@ import java.util.List;
  * therefore need to be able to work with the Trusted provider API.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public class TrustedProviderClient extends AbstractOtagServiceClient {
 

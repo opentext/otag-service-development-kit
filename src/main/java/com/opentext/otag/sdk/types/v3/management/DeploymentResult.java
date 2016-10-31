@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Represents the result of an AppWorks app/service deployment.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public class DeploymentResult implements Serializable {
 

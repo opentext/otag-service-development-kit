@@ -13,7 +13,7 @@ import com.opentext.otag.sdk.types.v3.message.SettingsChangeMessage;
  * defined by the handlers implementation of {@link SettingChangeHandler#getSettingKey}.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public interface SettingChangeHandler extends OtagMessageHandler<SettingsChangeMessage> {
 

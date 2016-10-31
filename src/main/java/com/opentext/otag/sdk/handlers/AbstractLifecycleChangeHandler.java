@@ -11,7 +11,7 @@ import com.opentext.otag.sdk.types.v3.message.LifecycleChangeMessage;
  * default implementation of the {@link OtagMessageHandler#handle} method.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public abstract class AbstractLifecycleChangeHandler implements LifecycleCallbackHandler {
 

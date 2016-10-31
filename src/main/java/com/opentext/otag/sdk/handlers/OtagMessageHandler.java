@@ -25,7 +25,7 @@ import com.opentext.otag.service.context.components.AWComponentContext;
  * @param <T> OTAG message type handled by this handler
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.0.1.1
+ * @version 16.1
  */
 public interface OtagMessageHandler<T extends OtagMessage> extends AWComponent {
 
