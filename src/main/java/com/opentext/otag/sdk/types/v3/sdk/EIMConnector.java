@@ -19,7 +19,7 @@ import java.io.Serializable;
  * Administration UI.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class EIMConnector extends SDKType implements Serializable {
 

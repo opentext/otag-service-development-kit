@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * {@link AWComponentContext#getComponent(Class)}
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  *
  * @see AWServiceStartupComplete
  * @see AWServiceContextHandler#onStart(String)

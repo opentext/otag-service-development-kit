@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * used as the primary auth mechanism in the Gateway then this annotation is ignored.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  *
  * @see AuthRequestHandler
  */

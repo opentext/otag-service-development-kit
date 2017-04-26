@@ -13,7 +13,7 @@ import java.io.Serializable;
  * newest.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class NotificationSeqBounds extends SDKType implements Serializable {
 

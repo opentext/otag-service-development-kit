@@ -29,7 +29,7 @@ import java.util.List;
  * config made via the AppWorks administration UI.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class SettingsClient extends AbstractOtagServiceClient {
 

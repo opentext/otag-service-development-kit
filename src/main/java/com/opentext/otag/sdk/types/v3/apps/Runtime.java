@@ -18,7 +18,7 @@ import java.util.Set;
  * the client representation we require.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  *
  * @see ClientInfo#runtime
  */

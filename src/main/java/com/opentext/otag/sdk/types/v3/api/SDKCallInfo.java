@@ -10,7 +10,7 @@ import javax.ws.rs.core.MultivaluedMap;
  * Retains information regarding an SDK call.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class SDKCallInfo {
 

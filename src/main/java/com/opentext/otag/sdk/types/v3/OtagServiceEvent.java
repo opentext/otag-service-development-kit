@@ -8,7 +8,7 @@ package com.opentext.otag.sdk.types.v3;
  * AppWorks Services it manages.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public enum OtagServiceEvent {
 

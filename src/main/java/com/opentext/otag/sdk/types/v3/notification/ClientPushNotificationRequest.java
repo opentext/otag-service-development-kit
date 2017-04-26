@@ -43,7 +43,7 @@ import java.util.*;
  *  }
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  *
  * @see GeneralPayload
  */

@@ -17,7 +17,7 @@ import java.util.Map;
  * aid in the creation of additional auth response body properties via {@link JsonNode}.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  *
  * @see ObjectMapper#createObjectNode()
  * @see ObjectMapper#createArrayNode()

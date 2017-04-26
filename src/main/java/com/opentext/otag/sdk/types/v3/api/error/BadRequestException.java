@@ -9,7 +9,7 @@ import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
  * 400 wrapper.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class BadRequestException extends APIException {
 

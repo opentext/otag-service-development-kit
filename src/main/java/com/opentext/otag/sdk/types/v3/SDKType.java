@@ -11,7 +11,7 @@ import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
  * the call used to retrieve the type. These types are used with the SDK clients mostly.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class SDKType {
 

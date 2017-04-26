@@ -21,7 +21,7 @@ import java.util.Map;
  * will be set based on the IP of the incoming request.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class ForwardHeaders implements Serializable {
 

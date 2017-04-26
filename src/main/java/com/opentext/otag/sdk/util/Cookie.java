@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Jackson compatible replica of {@code java.servlet.http.Cookie}.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  */
 public class Cookie implements Serializable {
 

@@ -16,7 +16,7 @@ import com.opentext.otag.sdk.types.v3.message.SettingsChangeMessage;
  * the value of a configuration setting directly if required.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  *
  * @see SettingsChangeMessage
  * @see SettingsClient

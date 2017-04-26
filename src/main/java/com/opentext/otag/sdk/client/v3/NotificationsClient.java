@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
  * Notification service itself the Servlet exposed in the Gateway must be used.
  *
  * @author Rhys Evans rhyse@opentext.com
- * @version 16.1
+ * @version 16.2
  *
  * @see NotificationRequest
  */
