@@ -3,9 +3,8 @@
  */
 package com.opentext.otag.sdk.provided;
 
-import com.opentext.otag.sdk.handlers.AbstractSettingChangeHandler;
-import com.opentext.otag.sdk.types.v3.message.SettingsChangeMessage;
 import com.opentext.otag.service.context.AWConfig;
+import com.opentext.otag.service.context.components.AWComponent;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
@@ -18,7 +17,7 @@ import org.apache.juli.logging.LogFactory;
  * @author Rhys Evans rhyse@opentext.com
  * @version 16.2
  */
-public class OtagUrlUpdateHandler {
+public class OtagUrlUpdateHandler implements AWComponent {
 
     private static final Log LOG = LogFactory.getLog(OtagUrlUpdateHandler.class);
 
