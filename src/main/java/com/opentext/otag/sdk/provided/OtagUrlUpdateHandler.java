@@ -18,40 +18,22 @@ import org.apache.juli.logging.LogFactory;
  * @author Rhys Evans rhyse@opentext.com
  * @version 16.2
  */
-public class OtagUrlUpdateHandler extends AbstractSettingChangeHandler {
+public class OtagUrlUpdateHandler {
 
     private static final Log LOG = LogFactory.getLog(OtagUrlUpdateHandler.class);
-
-    private static final String OTAG_URL = "otag.url";
 
     /**
      * The URL that the Gateway believes it should be contacted using.
      */
     private String otagUrl;
 
-    @Override
-    public String getSettingKey() {
-        return OTAG_URL;
-    }
-
-    @Override
-    public void onSettingChanged(SettingsChangeMessage message) {
-        if (LOG.isDebugEnabled())
-            LOG.debug("OTAG URL change detected");
-
-        String newOtagUrl = message.getNewValue();
-        otagUrl = newOtagUrl;
-
-        if (LOG.isDebugEnabled())
-            LOG.debug("updated URL to " + newOtagUrl);
-    }
-
     public String getOtagUrl() {
         if (otagUrl == null) {
-            // try the meta-data file if we haven't been informed of any changes to the
-            // url settings value
+            // always use the value in the web.xml, which should be the local host name / address
+            // for this node.  Don't use the otag.url setting, as this is an external address.
             AWConfig appWorksConfig = new AWConfig();
             otagUrl = appWorksConfig.getGatewayUrl();
+            LOG.info("Using Gateway Service URL: " + otagUrl);
         }
         return otagUrl;
     }
