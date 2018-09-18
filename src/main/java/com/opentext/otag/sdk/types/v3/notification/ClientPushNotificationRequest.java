@@ -106,7 +106,7 @@ public class ClientPushNotificationRequest implements Serializable {
     public ClientPushNotificationRequest() {
     }
 
-    private ClientPushNotificationRequest(Builder builder) {
+    protected ClientPushNotificationRequest(Builder builder) {
         broadcast = builder.broadcast;
         clientIds = builder.clientIds;
         users = builder.users;

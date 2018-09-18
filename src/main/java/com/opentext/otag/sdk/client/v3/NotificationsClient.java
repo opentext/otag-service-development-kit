@@ -8,6 +8,7 @@ import com.opentext.otag.sdk.types.v3.api.error.APIException;
 import com.opentext.otag.sdk.types.v3.notification.ClientPushNotificationRequest;
 import com.opentext.otag.sdk.types.v3.notification.NotificationRequest;
 import com.opentext.otag.sdk.types.v3.notification.NotificationSeqBounds;
+import com.opentext.otag.sdk.types.v3.notification.fcm.FcmPushNotificationRequest;
 import com.opentext.otag.sdk.util.UrlPathUtil;
 import com.opentext.otag.service.context.AWConfigFactory;
 import org.slf4j.Logger;
@@ -54,7 +55,9 @@ public class NotificationsClient extends AbstractOtagServiceClient {
      * @param notificationRequest push notification request
      * @return true if the request was successful, false otherwise
      * @throws APIException if a non 200 response is received
+     * @deprecated  since 16.5.0, replaced by {@link #sendFcmPushNotification}
      */
+    @Deprecated
     public SDKResponse sendPushNotification(ClientPushNotificationRequest notificationRequest) {
         String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName + "/push";
 
@@ -69,6 +72,34 @@ public class NotificationsClient extends AbstractOtagServiceClient {
             return processGenericPost(requestUrl , target, requestEntity, requestHeaders);
         } catch (Exception e) {
             LOG.error("Failed to send push notification", e);
+            throw processFailureResponse(requestUrl, requestHeaders, e);
+        }
+
+    }
+
+    /**
+     * Send a push notification request to the AppWorks Gateway to issue on your behalf to its
+     * connected GCM clients (iOS and Android). This notification can be sent to multiple
+     * clients based on the content of the request.
+     *
+     * @param notificationRequest FCM push notification request
+     * @return true if the request was successful, false otherwise
+     * @throws APIException if a non 200 response is received
+     */
+    public SDKResponse sendFcmPushNotification(FcmPushNotificationRequest notificationRequest) {
+        String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName + "/fcm-push";
+
+        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(requestUrl))
+                .path(UrlPathUtil.getPath(requestUrl));
+
+        Entity<FcmPushNotificationRequest> requestEntity = Entity.entity(
+                notificationRequest, MediaType.APPLICATION_JSON_TYPE);
+
+        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
+        try {
+            return processGenericPost(requestUrl , target, requestEntity, requestHeaders);
+        } catch (Exception e) {
+            LOG.error("Failed to send FCM push notification", e);
             throw processFailureResponse(requestUrl, requestHeaders, e);
         }
 
