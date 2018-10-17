@@ -60,7 +60,7 @@ public class TrustedProviderClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public TrustedProvider getOrCreate(String name) {
-        SdkQueueEvent getEvt = SdkQueueEvent.request(new SdkRequest<>(name, SdkEventKeys.PROVIDER_GET_OR_CREATE),
+        SdkQueueEvent getEvt = SdkQueueEvent.request(new SdkRequest<>(SdkEventKeys.PROVIDER_GET_OR_CREATE, name),
                 getAppName(), getPersistenceContext());
 
         try {
