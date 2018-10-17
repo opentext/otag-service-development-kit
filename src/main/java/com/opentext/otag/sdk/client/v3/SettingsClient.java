@@ -118,7 +118,7 @@ public class SettingsClient extends AbstractOtagServiceClient {
     public Setting getSetting(String settingKey) {
         checkSettingKey(settingKey);
         return sendSdkEventAndGetTypedResponse(SdkQueueEvent.request(
-                new SdkRequest<>(SdkEventKeys.SETTINGS_GET_SETTINGS, settingKey), getAppName(), getPersistenceContext()),
+                new SdkRequest<>(SdkEventKeys.SETTINGS_GET_SETTING, settingKey), getAppName(), getPersistenceContext()),
                 Setting.class);
     }
 
