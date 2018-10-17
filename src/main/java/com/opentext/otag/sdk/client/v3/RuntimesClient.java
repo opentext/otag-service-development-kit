@@ -3,21 +3,14 @@
  */
 package com.opentext.otag.sdk.client.v3;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
+import com.opentext.otag.sdk.bus.SdkEventKeys;
+import com.opentext.otag.sdk.bus.SdkQueueEvent;
 import com.opentext.otag.sdk.types.v3.api.error.APIException;
-import com.opentext.otag.sdk.types.v3.apps.Runtime;
 import com.opentext.otag.sdk.types.v3.apps.Runtimes;
-import com.opentext.otag.sdk.util.UrlPathUtil;
+import com.opentext.otag.sdk.types.v4.SdkRequest;
 import com.opentext.otag.service.context.AWConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Runtime API service client. Runtimes represent client applications that
@@ -34,8 +27,6 @@ import java.util.List;
  * @version 16.2
  */
 public class RuntimesClient extends AbstractOtagServiceClient {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RuntimesClient.class);
 
     public static final String RUNTIMES_SERVICE_PATH = OTAG_DEPLOYMENTS_SERVICE_PATH + "runtimes/";
 
@@ -55,29 +46,13 @@ public class RuntimesClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public Runtimes getAllRuntimes() {
-        String getAllUrl = getManagementPath(appName);
+        SdkQueueEvent getRuntimesEvt = SdkQueueEvent.request(new SdkRequest<>(SdkEventKeys.GET_RUNTIMES),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getAllUrl))
-                .path(UrlPathUtil.getPath(getAllUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
         try {
-            Response response = target.request()
-                    .headers(requestHeaders)
-                    .get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-            validateResponse(getAllUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            List<Runtime> runtimes = getMapper().readValue(responseBody, new TypeReference<List<Runtime>>() {});
-
-            return new Runtimes(runtimes, new SDKCallInfo(getAllUrl, requestHeaders, responseStatus,
-                    responseHeaders, responseBody));
+            return sendSdkEventAndGetTypedResponse(getRuntimesEvt, Runtimes.class);
         } catch (Exception e) {
-            LOG.error("Failed to list runtimes", e);
-            throw processFailureResponse(getAllUrl, requestHeaders, e);
+            throw new APIException("Failed to retrieve all runtimes via the SDK", e);
         }
     }
 

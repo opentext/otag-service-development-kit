@@ -6,6 +6,9 @@ package com.opentext.otag.sdk.client.v3;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.opentext.otag.sdk.bus.SdkQueueCallbackManager;
+import com.opentext.otag.sdk.bus.SdkQueueEvent;
+import com.opentext.otag.sdk.bus.SdkQueueManager;
 import com.opentext.otag.sdk.types.v3.ErrorResponseWrapper;
 import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
 import com.opentext.otag.sdk.types.v3.api.SDKResponse;
@@ -13,7 +16,6 @@ import com.opentext.otag.sdk.types.v3.api.error.*;
 import com.opentext.otag.sdk.util.UrlPathUtil;
 import com.opentext.otag.service.context.AWConfig;
 import com.opentext.otag.service.context.AWConfigFactory;
-import com.opentext.otag.tomcat.TomcatLifecycleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides the base implementation for an AppWorks Service REST client.
@@ -45,18 +49,31 @@ import java.util.List;
  */
 public class AbstractOtagServiceClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractOtagServiceClient.class);
-
     public static final String APP_KEY_HEADER = "otagAppKey";
     static final String OTAG_DEPLOYMENTS_SERVICE_PATH = "/deployments/";
     private static final List<Integer> HTTP_ERROR_STATUS_CODES = Arrays.asList(400, 401, 403, 404, 500);
     private static final String OTAGTOKEN_HEADER = "otagtoken";
 
-    private static final String EARLY_CLIENT_CONSTRUCTION_ERROR = "ServiceClient instances cannot be used safely before the " +
-            "host container has been setup and the Gateway has started, please delay client " +
-            "construction until after AWServiceContextHandler#onStart has fired within your" +
-            "services @AWServiceStartupComplete method has fired";
+    private static final AWConfig AW_CONFIG = AWConfigFactory.defaultFactory().getConfig();
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractOtagServiceClient.class);
+
+    /**
+     * Local callback manager for the SDK, use it register message ids before you send them.
+     */
+    private static final SdkQueueCallbackManager SDK_CALLBACK_MGR;
+
+    static {
+        String ctx = AW_CONFIG.getPersistenceContext();
+        String name = AW_CONFIG.getAppName();
+        SDK_CALLBACK_MGR = SdkQueueCallbackManager.serviceCbackManager(name, ctx);
+        LOG.info("Kick starting SDK event callback manager for {}", name);
+        SdkQueueManager.sendEventToService(name, ctx, SdkQueueEvent.start());
+    }
+
+    public static SdkQueueCallbackManager getSdkCallbackMgr() {
+        return SDK_CALLBACK_MGR;
+    }
 
     /**
      * Jersey client used to facilitate communications with the OTAG service endpoints.
@@ -72,6 +89,8 @@ public class AbstractOtagServiceClient {
      * Unique name of the app.
      */
     protected String appName;
+
+    protected String persistenceContext = "OTAG";
 
     /**
      * URL we should use for Gateway service APIs.
@@ -97,8 +116,6 @@ public class AbstractOtagServiceClient {
      * to understand how we should be communicating with our managing Gateway instance.
      */
     public AbstractOtagServiceClient() {
-        ensureGatewayIsReady();
-
         configurationLoaderFactory = AWConfigFactory.defaultFactory();
         restClient = ClientBuilder.newClient().register(JacksonJsonProvider.class);
         // read config from deployment meta-data file created by managing service
@@ -113,8 +130,6 @@ public class AbstractOtagServiceClient {
      *                                   read the service configuration (otagUrl, appKey, etc.) from somewhere
      */
     public AbstractOtagServiceClient(Client restClient, AWConfigFactory configurationLoaderFactory) {
-        ensureGatewayIsReady();
-
         this.restClient = restClient;
         this.configurationLoaderFactory = configurationLoaderFactory;
 
@@ -123,6 +138,10 @@ public class AbstractOtagServiceClient {
 
     public String getAppName() {
         return appName;
+    }
+
+    public String getPersistenceContext() {
+        return persistenceContext;
     }
 
     public void setAppName(String appName) {
@@ -231,8 +250,27 @@ public class AbstractOtagServiceClient {
         MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
         validateResponse(requestUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
 
-        return new SDKResponse(true, new SDKCallInfo(requestUrl, requestHeaders, responseStatus,
-                responseHeaders, responseBody));
+        return new SDKResponse(true, new SDKCallInfo(requestUrl, toHashMap(requestHeaders), responseStatus,
+                toHashMap(responseHeaders), responseBody));
+    }
+
+    private Map<String, Object> toHashMap(MultivaluedMap<String, Object>  multivaluedMap) {
+        Map<String, Object> map = new HashMap<>();
+        if (multivaluedMap == null) {
+            return map;
+        }
+        for (Map.Entry<String, List<Object>> entry : multivaluedMap.entrySet()) {
+            StringBuilder sb = new StringBuilder();
+            for (Object s : entry.getValue()) {
+                if (sb.length() > 0) {
+                    sb.append(',');
+                }
+                sb.append(s);
+            }
+
+            map.put(entry.getKey(), sb.toString());
+        }
+        return map;
     }
 
     protected void validateResponse(String requestUrl, MultivaluedMap<String, Object> requestHeaders,
@@ -243,10 +281,40 @@ public class AbstractOtagServiceClient {
                     responseBody, responseHeaders);
     }
 
-    private void ensureGatewayIsReady() {
-        if (!TomcatLifecycleListener.containerReady()) {
-            LOG.error(EARLY_CLIENT_CONSTRUCTION_ERROR);
-            throw new IllegalStateException(EARLY_CLIENT_CONSTRUCTION_ERROR);
+    protected SDKResponse sendSdkEventAndGetResponse(SdkQueueEvent sdkEvt) {
+        try {
+            String sdkEventIdentifier = sdkEvt.getSdkEventIdentifier();
+
+            LOG.info("Sending SDK request from service {}", sdkEvt.getSdkEventIdentifier());
+            LOG.info("SDK event id for new request to {} was {}",
+                    sdkEvt.getSdkRequest().getEndpointId(), sdkEventIdentifier);
+
+            SdkQueueManager.sendEventToGateway(sdkEvt);
+            SdkQueueEvent responseForEvent = getSdkCallbackMgr().getResponseForEvent(sdkEventIdentifier);
+            SDKResponse sdkResponse = responseForEvent.getSdkResponse();
+
+            if (sdkResponse != null && !sdkResponse.isSuccess()) {
+                Object responseBody = sdkResponse.getResponseBody();
+                if (responseBody instanceof Throwable) {
+                    Throwable asErr = (Throwable) responseBody;
+                    throw new APIException("SDK error response received - " + asErr.getMessage(), asErr);
+                }
+            }
+
+            return sdkResponse;
+        } catch (InterruptedException e) {
+            throw new APIException("SDK client was interrupted waiting for response from sdk", e);
+        }
+    }
+
+    protected <T> T sendSdkEventAndGetTypedResponse(SdkQueueEvent sdkEvt, Class<T> type) {
+        try {
+            String sdkEventIdentifier = sdkEvt.getSdkEventIdentifier();
+            SdkQueueManager.sendEventToGateway(sdkEvt);
+            SdkQueueEvent responseForEvent = getSdkCallbackMgr().getResponseForEvent(sdkEventIdentifier);
+            return SdkQueueEvent.extractBodyFromResponse(responseForEvent, type).orElse(null);
+        } catch (InterruptedException e) {
+            throw new APIException("client was interrupted waiting for response from sdk", e);
         }
     }
 
@@ -281,8 +349,8 @@ public class AbstractOtagServiceClient {
                                               String responseBody,
                                               MultivaluedMap<String, Object> responseHeaders,
                                               Exception exception) {
-        SDKCallInfo callInfo = new SDKCallInfo(url, requestHeaders, responseStatus,
-                responseHeaders, responseBody);
+        SDKCallInfo callInfo = new SDKCallInfo(url, toHashMap(requestHeaders), responseStatus,
+                toHashMap(responseHeaders), responseBody);
 
         callInfo.setException(exception);
 

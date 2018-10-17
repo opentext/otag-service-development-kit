@@ -7,7 +7,7 @@
 
     <groupId>com.opentext.otag.sdk</groupId>
     <artifactId>otag-service-development-kit</artifactId>
-    <version>16.5.0-SNAPSHOT</version>
+    <version>16.5.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Open Text AppWorks Gateway Service Developer Kit (SDK)</name>
@@ -38,6 +38,8 @@
         </fortify.results.file>
         <fortify.log.file>${project.build.directory}/fortify-code-analysis/sca-scan.log</fortify.log.file>
         <fortify.source>1.8</fortify.source>
+
+        <nexus.base.url>http://appworks-re1.lab.opentext.com:8082/nexus</nexus.base.url>
     </properties>
 
     <profiles>
@@ -257,6 +259,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.opentext.otag.sdk.bus</groupId>
+            <artifactId>otag-sdk-bus</artifactId>
+            <version>16.5.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3.5</version>
@@ -324,5 +333,19 @@
         </dependency>
 
     </dependencies>
+
+
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>${nexus.base.url}/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>${nexus.base.url}/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

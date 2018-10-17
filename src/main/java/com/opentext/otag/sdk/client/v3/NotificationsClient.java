@@ -3,23 +3,20 @@
  */
 package com.opentext.otag.sdk.client.v3;
 
+import com.opentext.otag.sdk.bus.SdkEventKeys;
+import com.opentext.otag.sdk.bus.SdkQueueEvent;
 import com.opentext.otag.sdk.types.v3.api.SDKResponse;
 import com.opentext.otag.sdk.types.v3.api.error.APIException;
 import com.opentext.otag.sdk.types.v3.notification.ClientPushNotificationRequest;
 import com.opentext.otag.sdk.types.v3.notification.NotificationRequest;
 import com.opentext.otag.sdk.types.v3.notification.NotificationSeqBounds;
 import com.opentext.otag.sdk.types.v3.notification.fcm.FcmPushNotificationRequest;
-import com.opentext.otag.sdk.util.UrlPathUtil;
+import com.opentext.otag.sdk.types.v4.SdkRequest;
 import com.opentext.otag.service.context.AWConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 
 /**
  * Notifications service client. Allows a service to issue a notification to
@@ -59,22 +56,10 @@ public class NotificationsClient extends AbstractOtagServiceClient {
      */
     @Deprecated
     public SDKResponse sendPushNotification(ClientPushNotificationRequest notificationRequest) {
-        String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName + "/push";
-
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(requestUrl))
-                .path(UrlPathUtil.getPath(requestUrl));
-
-        Entity<ClientPushNotificationRequest> requestEntity = Entity.entity(
-                notificationRequest, MediaType.APPLICATION_JSON_TYPE);
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            return processGenericPost(requestUrl , target, requestEntity, requestHeaders);
-        } catch (Exception e) {
-            LOG.error("Failed to send push notification", e);
-            throw processFailureResponse(requestUrl, requestHeaders, e);
-        }
-
+        // we just wrap the notification in the FCM version
+        FcmPushNotificationRequest fcmReq = new FcmPushNotificationRequest(
+                new ClientPushNotificationRequest.Builder(notificationRequest));
+        return sendFcmPushNotification(fcmReq);
     }
 
     /**
@@ -87,22 +72,12 @@ public class NotificationsClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public SDKResponse sendFcmPushNotification(FcmPushNotificationRequest notificationRequest) {
-        String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName + "/fcm-push";
+        SdkRequest<FcmPushNotificationRequest> sdkRequest = new SdkRequest<>(
+                SdkEventKeys.NOTIFICATIONS_PUSH, notificationRequest);
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(requestUrl))
-                .path(UrlPathUtil.getPath(requestUrl));
+        SdkQueueEvent sdkEvt = SdkQueueEvent.request(sdkRequest, getAppName(), getPersistenceContext());
 
-        Entity<FcmPushNotificationRequest> requestEntity = Entity.entity(
-                notificationRequest, MediaType.APPLICATION_JSON_TYPE);
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            return processGenericPost(requestUrl , target, requestEntity, requestHeaders);
-        } catch (Exception e) {
-            LOG.error("Failed to send FCM push notification", e);
-            throw processFailureResponse(requestUrl, requestHeaders, e);
-        }
-
+        return sendSdkEventAndGetResponse(sdkEvt);
     }
 
     /**
@@ -115,22 +90,11 @@ public class NotificationsClient extends AbstractOtagServiceClient {
      */
     @Deprecated
     public SDKResponse sendNotification(NotificationRequest notificationRequest) {
-        String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName;
+        SdkRequest<NotificationRequest> sdkRequest = new SdkRequest<>(
+                SdkEventKeys.NOTIFICATIONS_SEND_WEB, notificationRequest);
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(requestUrl))
-                .path(UrlPathUtil.getPath(requestUrl));
-
-        Entity<NotificationRequest> requestEntity = Entity.entity(
-                notificationRequest, MediaType.APPLICATION_JSON_TYPE);
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            return processGenericPost(requestUrl, target, requestEntity, requestHeaders);
-        } catch (Exception e) {
-            LOG.error("Failed to send Notification", e);
-            throw processFailureResponse(requestUrl, requestHeaders, e);
-        }
-
+        SdkQueueEvent sdkEvt = SdkQueueEvent.request(sdkRequest, getAppName(), getPersistenceContext());
+        return sendSdkEventAndGetResponse(sdkEvt);
     }
 
     /**
@@ -145,28 +109,10 @@ public class NotificationsClient extends AbstractOtagServiceClient {
      * @return bounds object representing the most recent and oldest notification ids
      */
     public NotificationSeqBounds getNotificationsMinMaxSeq() {
-        String requestUrl = getManagingOtagUrl() + NOTIFICATION_SERVICE_PATH + appName + "/seqBounds";
+        SdkRequest request = new SdkRequest(SdkEventKeys.NOTIFICATIONS_GET_NOTIF_SEQ_BOUNDS);
+        SdkQueueEvent getBoundsEvt = SdkQueueEvent.request(request, getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(requestUrl))
-                .path(UrlPathUtil.getPath(requestUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            Response response = target.request()
-                    .headers(requestHeaders)
-                    .get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-
-            validateResponse(requestUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            return getMapper().readValue(responseBody, NotificationSeqBounds.class);
-        } catch (Exception e) {
-            LOG.error("Failed to get notification min/max seq", e);
-            return null;
-        }
+        return sendSdkEventAndGetTypedResponse(getBoundsEvt, NotificationSeqBounds.class);
     }
 
 }

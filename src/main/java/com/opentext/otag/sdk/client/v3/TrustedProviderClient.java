@@ -3,21 +3,15 @@
  */
 package com.opentext.otag.sdk.client.v3;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.opentext.otag.sdk.bus.SdkEventKeys;
+import com.opentext.otag.sdk.bus.SdkQueueEvent;
 import com.opentext.otag.sdk.types.v3.TrustedProvider;
 import com.opentext.otag.sdk.types.v3.TrustedProviders;
-import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
 import com.opentext.otag.sdk.types.v3.api.error.APIException;
-import com.opentext.otag.sdk.util.UrlPathUtil;
+import com.opentext.otag.sdk.types.v4.SdkRequest;
 import com.opentext.otag.service.context.AWConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Trusted provider/server API service client. Trusted servers represent a known
@@ -29,8 +23,6 @@ import java.util.List;
  * @version 16.2
  */
 public class TrustedProviderClient extends AbstractOtagServiceClient {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TrustedProviderClient.class);
 
     public static final String PROVIDERS_SERVICE_PATH = OTAG_DEPLOYMENTS_SERVICE_PATH + "trustedProviders/";
 
@@ -50,31 +42,13 @@ public class TrustedProviderClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public TrustedProviders getAllProviders() {
-        String getAllUrl = getManagementPath(appName);
+        SdkQueueEvent getEvt = SdkQueueEvent.request(new SdkRequest<>(SdkEventKeys.PROVIDER_LIST_PROVIDERS),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getAllUrl))
-                .path(UrlPathUtil.getPath(getAllUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
         try {
-            Response response = target.request()
-                    .headers(requestHeaders)
-                    .get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-            validateResponse(getAllUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            List<TrustedProvider> providers = getMapper().readValue(
-                    responseBody, new TypeReference<List<TrustedProvider>>() {});
-
-            return new TrustedProviders(providers,
-                    new SDKCallInfo(getAllUrl, requestHeaders, responseStatus,
-                    responseHeaders, responseBody));
+            return sendSdkEventAndGetTypedResponse(getEvt, TrustedProviders.class);
         } catch (Exception e) {
-            LOG.error("Failed to list providers", e);
-            throw processFailureResponse(getAllUrl, requestHeaders, e);
+            throw new APIException("We failed to list the known providers", e);
         }
     }
 
@@ -86,29 +60,13 @@ public class TrustedProviderClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public TrustedProvider getOrCreate(String name) {
-        String getByNameUrl = getManagementPath(appName) + name;
+        SdkQueueEvent getEvt = SdkQueueEvent.request(new SdkRequest<>(name, SdkEventKeys.PROVIDER_GET_OR_CREATE),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getByNameUrl))
-                .path(UrlPathUtil.getPath(getByNameUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
         try {
-            Response response = target.request()
-                    .headers(requestHeaders)
-                    .get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-            validateResponse(getByNameUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            TrustedProvider provider = getMapper().readValue(responseBody, TrustedProvider.class);
-            provider.setSdkCallInfo(new SDKCallInfo(getByNameUrl, requestHeaders, responseStatus,
-                    responseHeaders, responseBody));
-            return provider;
+            return sendSdkEventAndGetTypedResponse(getEvt, TrustedProvider.class);
         } catch (Exception e) {
-            LOG.error("Failed to get or create provider " + name, e);
-            throw processFailureResponse(getByNameUrl, requestHeaders, e);
+            throw new APIException("We failed to get/create provider with name " + name, e);
         }
     }
 

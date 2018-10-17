@@ -3,24 +3,18 @@
  */
 package com.opentext.otag.sdk.client.v3;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.opentext.otag.sdk.bus.SdkEventKeys;
+import com.opentext.otag.sdk.bus.SdkQueueEvent;
 import com.opentext.otag.sdk.handlers.AuthRequestHandler;
-import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
 import com.opentext.otag.sdk.types.v3.api.SDKResponse;
 import com.opentext.otag.sdk.types.v3.api.error.APIException;
 import com.opentext.otag.sdk.types.v3.auth.*;
-import com.opentext.otag.sdk.util.UrlPathUtil;
+import com.opentext.otag.sdk.types.v4.SdkRequest;
 import com.opentext.otag.service.context.AWConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -60,33 +54,11 @@ public class AuthClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public AuthorizedUser getUserForToken(String otagToken) {
-        String getUrl = getManagementPath(appName) + "user";
+        SdkQueueEvent getUserEvt = SdkQueueEvent.request(
+                new SdkRequest<>(SdkEventKeys.AUTH_GET_TOKEN_FOR_USER, otagToken),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getUrl))
-                .path(UrlPathUtil.getPath(getUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders(otagToken);
-
-        try {
-            Response response = target.request()
-                    .headers(requestHeaders)
-                    .get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-
-            validateResponse(getUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            AuthorizedUser authorizedUser = getMapper().readValue(responseBody, AuthorizedUser.class);
-            SDKCallInfo callInfo = new SDKCallInfo(getUrl, requestHeaders, responseStatus,
-                    responseHeaders, responseBody);
-            authorizedUser.setSdkCallInfo(callInfo);
-            return authorizedUser;
-        } catch (Exception e) {
-            LOG.warn("Unable to get user for token, returning null", e);
-            throw processFailureResponse(getUrl, requestHeaders, e);
-        }
+        return sendSdkEventAndGetTypedResponse(getUserEvt, AuthorizedUser.class);
     }
 
     /**
@@ -101,30 +73,11 @@ public class AuthClient extends AbstractOtagServiceClient {
         Objects.requireNonNull(user);
         Objects.requireNonNull(user.getUserName());
 
-        String getUrl = getManagementPath(appName) + "users/" + user.getUserName() + "/groups";
+        SdkQueueEvent getUserGroupsIds = SdkQueueEvent.request(
+                new SdkRequest<>(SdkEventKeys.AUTH_LIST_GROUP_USER_IDS, user.getUserName()),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getUrl))
-                .path(UrlPathUtil.getPath(getUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            Response response = target.request().headers(requestHeaders).get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-
-            validateResponse(getUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            List<String> ids = getMapper().readValue(responseBody, new TypeReference<List<String>>() {});
-            SDKCallInfo callInfo = new SDKCallInfo(getUrl, requestHeaders, responseStatus,
-                    responseHeaders, responseBody);
-
-            return new UserGroupIdList(ids, callInfo);
-        } catch (Exception e) {
-            LOG.error("Unable to get users group ids, returning empty list", e);
-            throw processFailureResponse(getUrl, requestHeaders, e);
-        }
+        return sendSdkEventAndGetTypedResponse(getUserGroupsIds, UserGroupIdList.class);
     }
 
     /**
@@ -135,33 +88,11 @@ public class AuthClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public UserProfile getUserProfie(String userName) {
-        String getUrl = getManagementPath(appName) + "users/" + userName + "/profile";
+        SdkQueueEvent getUserGroupsIds = SdkQueueEvent.request(
+                new SdkRequest<>(SdkEventKeys.AUTH_GET_USER_PROFILE, userName),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getUrl))
-                .path(UrlPathUtil.getPath(getUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            Response response = target.request()
-                    .header(APP_KEY_HEADER, appKey)
-                    .accept(MediaType.APPLICATION_JSON_TYPE)
-                    .get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-
-            validateResponse(getUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            OtdsUserProfile userProfile = getMapper().readValue(responseBody, OtdsUserProfile.class);
-            userProfile.setSdkCallInfo(new SDKCallInfo(getUrl, requestHeaders, responseStatus,
-                    responseHeaders, responseBody));
-
-            return userProfile;
-        } catch (Exception e) {
-            LOG.error("Unable to get user profile, returning null", e);
-            throw processFailureResponse(getUrl, requestHeaders, e);
-        }
+        return sendSdkEventAndGetTypedResponse(getUserGroupsIds, UserProfile.class);
     }
 
     /**
@@ -175,21 +106,12 @@ public class AuthClient extends AbstractOtagServiceClient {
      * @see com.opentext.otag.sdk.handlers.AuthRequestHandler
      */
     public SDKResponse registerAuthHandlers(RegisterAuthHandlersRequest request) {
-        String registerUrl = getManagementPath(appName) + "handlers";
+        SdkQueueEvent registerHandlerEvt = SdkQueueEvent.request(
+                new SdkRequest<>(SdkEventKeys.AUTH_REGISTER_AUTH_HANDLERS, request),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(registerUrl))
-                .path(UrlPathUtil.getPath(registerUrl));
+        return sendSdkEventAndGetResponse(registerHandlerEvt);
 
-        Entity<RegisterAuthHandlersRequest> requestEntity = Entity.entity(
-                request, MediaType.APPLICATION_JSON_TYPE);
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            return processGenericPost(registerUrl, target, requestEntity, requestHeaders);
-        } catch (Exception e) {
-            LOG.error("Failed to register auth handlers", e);
-            throw processFailureResponse(registerUrl, requestHeaders, e);
-        }
     }
 
     private String getManagementPath(String appName) {

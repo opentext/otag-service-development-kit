@@ -3,26 +3,19 @@
  */
 package com.opentext.otag.sdk.client.v3;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
+import com.opentext.otag.sdk.bus.SdkQueueEvent;
+import com.opentext.otag.sdk.bus.SdkQueueManager;
 import com.opentext.otag.sdk.types.v3.api.SDKResponse;
 import com.opentext.otag.sdk.types.v3.api.error.APIException;
 import com.opentext.otag.sdk.types.v3.management.DeploymentResult;
 import com.opentext.otag.sdk.types.v3.sdk.EIMConnector;
 import com.opentext.otag.sdk.types.v3.sdk.EIMConnectors;
-import com.opentext.otag.sdk.util.UrlPathUtil;
+import com.opentext.otag.sdk.types.v4.SdkRequest;
 import com.opentext.otag.service.context.AWConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.Objects;
+
+import static com.opentext.otag.sdk.bus.SdkEventKeys.*;
 
 /**
  * AppWorks Service services client. Used to perform administrative type
@@ -33,8 +26,6 @@ import java.util.Objects;
  * @version 16.2
  */
 public class ServiceClient extends AbstractOtagServiceClient {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceClient.class);
 
     public ServiceClient() {
         super();
@@ -56,23 +47,11 @@ public class ServiceClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public SDKResponse completeDeployment(DeploymentResult deploymentResult) {
-        String registerUrl = getManagingOtagUrl() + OTAG_DEPLOYMENTS_SERVICE_PATH + "manage/" +
-                appName + "/status";
+        SdkRequest<DeploymentResult> sdkRequest = new SdkRequest<>(SERVICE_MGMT_COMPLETE_DEPLOYMENT, deploymentResult);
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(registerUrl))
-                .path(UrlPathUtil.getPath(registerUrl));
+        SdkQueueEvent completeDeployReq = SdkQueueEvent.request(sdkRequest, getAppName(), getPersistenceContext());
 
-        Entity<DeploymentResult> reqEntity = Entity.entity(
-                deploymentResult, MediaType.APPLICATION_JSON_TYPE);
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            return processGenericPost(registerUrl, target, reqEntity, requestHeaders);
-        } catch (Exception e) {
-            LOG.error("Failed to complete deployment", e);
-            throw processFailureResponse(registerUrl, requestHeaders, e);
-        }
-
+        return sendSdkEventAndGetResponse(completeDeployReq);
     }
 
     /**
@@ -82,35 +61,11 @@ public class ServiceClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public EIMConnectors getEIMConnectors() {
-        String getConnectorsUrl = getManagingOtagUrl() + OTAG_DEPLOYMENTS_SERVICE_PATH + "manage/" +
-                appName + "/eimconnectors";
+        SdkQueueEvent sdkQueueEvent = SdkQueueEvent.request(
+                new SdkRequest<>(GET_EIM_CONNECTORS),getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getConnectorsUrl))
-                .path(UrlPathUtil.getPath(getConnectorsUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            Response response = target.request()
-                    .header(APP_KEY_HEADER, appKey)
-                    .get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-
-            validateResponse(getConnectorsUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            List<EIMConnector> connectors = getMapper()
-                    .readValue(responseBody, new TypeReference<List<EIMConnector>>() {
-                    });
-
-            return new EIMConnectors(connectors,
-                    new SDKCallInfo(getConnectorsUrl, requestHeaders, responseStatus,
-                            responseHeaders, responseBody));
-        } catch (Exception e) {
-            LOG.error("Failed to retrieve the EIM connectors from the Gateway", e);
-            throw processFailureResponse(getConnectorsUrl, requestHeaders, e);
-        }
+        SdkQueueManager.sendEventToGateway(sdkQueueEvent);
+        return sendSdkEventAndGetTypedResponse(sdkQueueEvent, EIMConnectors.class);
     }
 
     /**
@@ -121,23 +76,11 @@ public class ServiceClient extends AbstractOtagServiceClient {
      * @throws APIException if a non 200 response is received
      */
     public SDKResponse registerConnector(EIMConnector eimConnector) {
-        Objects.requireNonNull(eimConnector);
-        String getConnectorsUrl = getManagingOtagUrl() + OTAG_DEPLOYMENTS_SERVICE_PATH + "manage/" +
-                appName + "/eimconnectors";
+        SdkQueueEvent registerEvent = SdkQueueEvent.request(
+                new SdkRequest<>(REGISTER_EIM_CONNECTOR, eimConnector),
+                getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(getConnectorsUrl))
-                .path(UrlPathUtil.getPath(getConnectorsUrl));
-
-        Entity<EIMConnector> connectorEntity = Entity.entity(
-                eimConnector, MediaType.APPLICATION_JSON_TYPE);
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
-        try {
-            return processGenericPost(getConnectorsUrl, target, connectorEntity, requestHeaders);
-        } catch (Exception e) {
-            LOG.error("Failed to register EIM connector with the Gateway", e);
-            throw processFailureResponse(getConnectorsUrl, requestHeaders, e);
-        }
+        return sendSdkEventAndGetResponse(registerEvent);
     }
 
 }

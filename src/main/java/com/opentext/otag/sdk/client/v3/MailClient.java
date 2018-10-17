@@ -3,24 +3,18 @@
  */
 package com.opentext.otag.sdk.client.v3;
 
+import com.opentext.otag.sdk.bus.SdkEventKeys;
+import com.opentext.otag.sdk.bus.SdkQueueEvent;
+import com.opentext.otag.sdk.bus.SdkQueueManager;
 import com.opentext.otag.sdk.types.v3.MailRequest;
 import com.opentext.otag.sdk.types.v3.MailResult;
-import com.opentext.otag.sdk.types.v3.api.SDKCallInfo;
 import com.opentext.otag.sdk.types.v3.api.SDKResponse;
 import com.opentext.otag.sdk.types.v3.api.error.APIException;
-import com.opentext.otag.sdk.util.UrlPathUtil;
+import com.opentext.otag.sdk.types.v4.SdkRequest;
 import com.opentext.otag.service.context.AWConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.client.AsyncInvoker;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 /**
  * Mail API Service client that exposes the Gateways email sending functionality.
@@ -29,10 +23,6 @@ import java.util.concurrent.Future;
  * @version 16.2
  */
 public class MailClient extends AbstractOtagServiceClient {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MailClient.class);
-
-    public static final String MAIL_SERVICE_PATH = OTAG_DEPLOYMENTS_SERVICE_PATH + "email/";
 
     public MailClient() {
         super();
@@ -49,25 +39,27 @@ public class MailClient extends AbstractOtagServiceClient {
      *
      * @param mailRequest a mail request
      * @return sdk response with a success indicator, true if the request manages to occur (even if the
-     *         mail was not sent by the Gateway)
+     * mail was not sent by the Gateway)
      * @throws APIException if a non 200 response is received
      */
     public SDKResponse sendMailAsync(MailRequest mailRequest) {
+        SdkRequest<MailRequest> request = new SdkRequest<>(SdkEventKeys.SEND_IMPORTANT_MAIL, mailRequest);
+        SdkQueueEvent sdkRequest = SdkQueueEvent.request(request, getAppName(), getPersistenceContext());
 
-        String mailUrl = getManagingOtagUrl() + MAIL_SERVICE_PATH + appName + "/send";
-
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(mailUrl))
-                .path(UrlPathUtil.getPath(mailUrl));
-
-        Entity<MailRequest> mailRequestEntity = Entity.entity(
-                mailRequest, MediaType.APPLICATION_JSON_TYPE);
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
         try {
-            return processGenericPost(mailUrl, target, mailRequestEntity, requestHeaders);
-        } catch (Exception e) {
-            LOG.error("Failed to send mail via Gateway", e);
-            throw processFailureResponse(mailUrl, requestHeaders, e);
+            SdkQueueManager.sendEventToGateway(sdkRequest);
+            SdkQueueEvent responseEvent = getSdkCallbackMgr().getResponseForEvent(sdkRequest.getSdkEventIdentifier());
+
+            SDKResponse sdkResponse = responseEvent.getSdkResponse();
+
+            if (sdkResponse != null) {
+                return sdkResponse;
+            } else {
+                throw new APIException("The SDK response did not contain any information");
+            }
+
+        } catch (InterruptedException e) {
+            throw new APIException("The sendMail SDK operation timed out", e);
         }
     }
 
@@ -86,42 +78,20 @@ public class MailClient extends AbstractOtagServiceClient {
      * @param mailRequest email request
      * @return true if the request succeeded false otherwise
      * @throws APIException if a non 200 response is received
-     *
      * @see MailRequest
      */
     public MailResult sendMail(MailRequest mailRequest) {
-        String mailUrl = getManagingOtagUrl() + MAIL_SERVICE_PATH + appName + "/important/send";
+        String endpointId = SdkEventKeys.SEND_IMPORTANT_MAIL;
+        SdkRequest<MailRequest> request = new SdkRequest<>(endpointId, mailRequest);
+        SdkQueueEvent sdkRequest = SdkQueueEvent.request(request, getAppName(), getPersistenceContext());
 
-        WebTarget target = restClient.target(UrlPathUtil.getBaseUrl(mailUrl))
-                .path(UrlPathUtil.getPath(mailUrl));
-
-        MultivaluedMap<String, Object> requestHeaders = getSDKRequestHeaders();
         try {
-
-            // sending mail is an asynchronous request
-            AsyncInvoker asyncInvoker = target.request()
-                    .headers(requestHeaders)
-                    .async();
-
-            Entity<MailRequest> mailRequestEntity = Entity.entity(
-                    mailRequest, MediaType.APPLICATION_JSON_TYPE);
-            Future<Response> responseFuture = asyncInvoker.post(mailRequestEntity);
-            Response response = responseFuture.get();
-
-            int responseStatus = response.getStatus();
-            String responseBody = response.readEntity(String.class);
-            MultivaluedMap<String, Object> responseHeaders = response.getHeaders();
-
-            validateResponse(mailUrl, requestHeaders, responseStatus, responseBody, responseHeaders);
-
-            MailResult mailResult = getMapper().readValue(responseBody, MailResult.class);
-            mailResult.setSdkCallInfo(new SDKCallInfo(mailUrl, requestHeaders, responseStatus,
-                    responseHeaders, responseBody));
-            return mailResult;
-        } catch (Exception e) {
-            // pass back an unsuccessful mail result with the exception type and message
-            LOG.error("Failed to send important mail", e);
-            throw processFailureResponse(mailUrl, requestHeaders, e);
+            SdkQueueManager.sendEventToGateway(sdkRequest);
+            SdkQueueEvent responseEvent = getSdkCallbackMgr().getResponseForEvent(sdkRequest.getSdkEventIdentifier());
+            Optional<MailResult> mailResult = SdkQueueEvent.extractBodyFromResponse(responseEvent, MailResult.class);
+            return mailResult.orElseThrow(() -> new APIException("Response body missing from SDK event"));
+        } catch (InterruptedException e) {
+            throw new APIException("The sendMail SDK operation timed out", e);
         }
     }
 
