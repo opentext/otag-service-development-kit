@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * EIM Connector implementation. Connectors are instance of the
@@ -24,7 +26,6 @@ import java.util.List;
  *
  * @author Rhys Evans rhyse@opentext.com
  * @version 16.2
- *
  * @see EIMConnectorService
  */
 public class EIMConnectorClientImpl extends AbstractOtagServiceClient implements EIMConnectorClient {
@@ -83,10 +84,11 @@ public class EIMConnectorClientImpl extends AbstractOtagServiceClient implements
 
         try {
             EIMConnectors availableConnectors = serviceClient.getEIMConnectors();
-            EIMConnector connector = getConnector(availableConnectors.getConnectors());
+            Optional<EIMConnector> connectorOpt = getConnector(availableConnectors.getConnectors());
 
             // we need to register for updates to the connectors connection URL
-            if (connector != null) {
+            if (connectorOpt.isPresent()) {
+                EIMConnector connector = connectorOpt.get();
                 String key = connector.getConnectionUrlSettingKey();
                 if (key != null) {
                     connectorConnectionSettingKey = key;
@@ -134,16 +136,12 @@ public class EIMConnectorClientImpl extends AbstractOtagServiceClient implements
         }
     }
 
-    private EIMConnector getConnector(List<EIMConnector> available) {
-        for (EIMConnector connector : available) {
-            if (connectorName.equals(connector.getConnectorName()) &&
-                    connectorVersion.equals(connector.getConnectorVersion())) {
-                return connector;
-            }
-        }
-
-        LOG.warn("Connector not found in available connectors");
-        return null;
+    private Optional<EIMConnector> getConnector(List<EIMConnector> available) {
+        return available.stream()
+                .filter(connector ->
+                        Objects.equals(connectorName, connector.getConnectorName()) &&
+                                Objects.equals(connectorVersion, connector.getConnectorVersion()))
+                .findFirst();
     }
 
 }
