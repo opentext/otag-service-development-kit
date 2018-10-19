@@ -7,7 +7,7 @@
 
     <groupId>com.opentext.otag.sdk</groupId>
     <artifactId>otag-service-development-kit</artifactId>
-    <version>16.5.1-SNAPSHOT</version>
+    <version>16.5.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Open Text AppWorks Gateway Service Developer Kit (SDK)</name>
