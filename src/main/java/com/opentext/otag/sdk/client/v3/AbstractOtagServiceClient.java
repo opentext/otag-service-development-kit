@@ -6,6 +6,7 @@ package com.opentext.otag.sdk.client.v3;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.opentext.otag.sdk.bus.SdkEventBusLog;
 import com.opentext.otag.sdk.bus.SdkQueueCallbackManager;
 import com.opentext.otag.sdk.bus.SdkQueueEvent;
 import com.opentext.otag.sdk.bus.SdkQueueManager;
@@ -49,14 +50,13 @@ import java.util.Map;
  */
 public class AbstractOtagServiceClient {
 
-    public static final String APP_KEY_HEADER = "otagAppKey";
+    static final String APP_KEY_HEADER = "otagAppKey";
     static final String OTAG_DEPLOYMENTS_SERVICE_PATH = "/deployments/";
+
     private static final List<Integer> HTTP_ERROR_STATUS_CODES = Arrays.asList(400, 401, 403, 404, 500);
     private static final String OTAGTOKEN_HEADER = "otagtoken";
 
     private static final AWConfig AW_CONFIG = AWConfigFactory.defaultFactory().getConfig();
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractOtagServiceClient.class);
 
     /**
      * Local callback manager for the SDK, use it register message ids before you send them.
@@ -67,7 +67,7 @@ public class AbstractOtagServiceClient {
         String ctx = AW_CONFIG.getPersistenceContext();
         String name = AW_CONFIG.getAppName();
         SDK_CALLBACK_MGR = SdkQueueCallbackManager.serviceCbackManager(name, ctx);
-        LOG.info("Kick starting SDK event callback manager for {}", name);
+        SdkEventBusLog.info("Kick starting SDK event callback manager for " + name);
         SdkQueueManager.sendEventToService(name, ctx, SdkQueueEvent.start());
     }
 
@@ -285,9 +285,9 @@ public class AbstractOtagServiceClient {
         try {
             String sdkEventIdentifier = sdkEvt.getSdkEventIdentifier();
 
-            LOG.info("Sending SDK request from service {}", sdkEvt.getSdkEventIdentifier());
-            LOG.info("SDK event id for new request to {} was {}",
-                    sdkEvt.getSdkRequest().getEndpointId(), sdkEventIdentifier);
+            SdkEventBusLog.info("Sending SDK request from service " + sdkEvt.getSdkEventIdentifier());
+            SdkEventBusLog.info("SDK event id for new request to "  + sdkEvt.getSdkRequest().getEndpointId() +
+                            " was " + sdkEventIdentifier);
 
             SdkQueueManager.sendEventToGateway(sdkEvt);
             SdkQueueEvent responseForEvent = getSdkCallbackMgr().getResponseForEvent(sdkEventIdentifier);
