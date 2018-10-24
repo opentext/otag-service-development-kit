@@ -80,6 +80,15 @@ public interface EIMConnectorClient {
         public String getMessage() {
             return message;
         }
+
+        @Override
+        public String toString() {
+            return "ConnectionResult{" +
+                    "connector=" + connector +
+                    ", success=" + success +
+                    ", message='" + message + '\'' +
+                    '}';
+        }
     }
 
 }
