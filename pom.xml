@@ -7,7 +7,7 @@
 
     <groupId>com.opentext.otag.sdk</groupId>
     <artifactId>otag-service-development-kit</artifactId>
-    <version>16.5.2-SNAPSHOT</version>
+    <version>16.5.0</version>
     <packaging>jar</packaging>
 
     <name>Open Text AppWorks Gateway Service Developer Kit (SDK)</name>
@@ -29,7 +29,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.9.5</jackson.version>
-        <appworks.platform.version>16.3.0</appworks.platform.version>
         <fortify.project.version>16.4.0</fortify.project.version>
         <fortify.auth.token>auth-token-here</fortify.auth.token>
         <fortify.ssc.url>http://host:port/ssc</fortify.ssc.url>
@@ -38,8 +37,6 @@
         </fortify.results.file>
         <fortify.log.file>${project.build.directory}/fortify-code-analysis/sca-scan.log</fortify.log.file>
         <fortify.source>1.8</fortify.source>
-
-        <nexus.base.url>http://appworks-re1.lab.opentext.com:8082/nexus</nexus.base.url>
     </properties>
 
     <profiles>
@@ -248,20 +245,20 @@
         <dependency>
             <groupId>com.opentext.otag.service.context</groupId>
             <artifactId>otag-service-context</artifactId>
-            <version>${appworks.platform.version}</version>
+            <version>16.5.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.opentext.otag.tomcat</groupId>
             <artifactId>otag-tomcat-listener</artifactId>
-            <version>${appworks.platform.version}</version>
+            <version>16.3.0</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.opentext.otag.sdk.bus</groupId>
             <artifactId>otag-sdk-bus</artifactId>
-            <version>16.5.1-SNAPSHOT</version>
+            <version>16.5.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -333,19 +330,5 @@
         </dependency>
 
     </dependencies>
-
-
-    <distributionManagement>
-        <repository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>${nexus.base.url}/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>${nexus.base.url}/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
 </project>
