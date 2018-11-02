@@ -31,8 +31,6 @@ import javax.ws.rs.client.Client;
  */
 public class NotificationsClient extends AbstractOtagServiceClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NotificationsClient.class);
-
     private static final String NOTIFICATION_SERVICE_PATH = OTAG_DEPLOYMENTS_SERVICE_PATH + "notifications/";
 
     public NotificationsClient() {

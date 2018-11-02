@@ -248,7 +248,7 @@
         <dependency>
             <groupId>com.opentext.otag.service.context</groupId>
             <artifactId>otag-service-context</artifactId>
-            <version>${appworks.platform.version}</version>
+            <version>16.5.0</version>
         </dependency>
 
         <dependency>
@@ -333,19 +333,5 @@
         </dependency>
 
     </dependencies>
-
-
-    <distributionManagement>
-        <repository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>${nexus.base.url}/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>${nexus.base.url}/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
 </project>
