@@ -6,8 +6,8 @@ package com.opentext.otag.sdk.client.v3;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.opentext.otag.sdk.SdkEventCallbackHandler;
 import com.opentext.otag.sdk.bus.SdkEventBusLog;
-import com.opentext.otag.sdk.bus.SdkQueueCallbackManager;
 import com.opentext.otag.sdk.bus.SdkQueueEvent;
 import com.opentext.otag.sdk.bus.SdkQueueManager;
 import com.opentext.otag.sdk.types.v3.ErrorResponseWrapper;
@@ -17,8 +17,6 @@ import com.opentext.otag.sdk.types.v3.api.error.*;
 import com.opentext.otag.sdk.util.UrlPathUtil;
 import com.opentext.otag.service.context.AWConfig;
 import com.opentext.otag.service.context.AWConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -55,25 +53,6 @@ public class AbstractOtagServiceClient {
 
     private static final List<Integer> HTTP_ERROR_STATUS_CODES = Arrays.asList(400, 401, 403, 404, 500);
     private static final String OTAGTOKEN_HEADER = "otagtoken";
-
-    private static final AWConfig AW_CONFIG = AWConfigFactory.defaultFactory().getConfig();
-
-    /**
-     * Local callback manager for the SDK, use it register message ids before you send them.
-     */
-    private static final SdkQueueCallbackManager SDK_CALLBACK_MGR;
-
-    static {
-        String ctx = AW_CONFIG.getPersistenceContext();
-        String name = AW_CONFIG.getAppName();
-        SDK_CALLBACK_MGR = SdkQueueCallbackManager.serviceCbackManager(name, ctx);
-        SdkEventBusLog.info("Kick starting SDK event callback manager for " + name);
-        SdkQueueManager.sendEventToService(name, ctx, SdkQueueEvent.start());
-    }
-
-    public static SdkQueueCallbackManager getSdkCallbackMgr() {
-        return SDK_CALLBACK_MGR;
-    }
 
     /**
      * Jersey client used to facilitate communications with the OTAG service endpoints.
@@ -290,7 +269,8 @@ public class AbstractOtagServiceClient {
                             " was " + sdkEventIdentifier);
 
             SdkQueueManager.sendEventToGateway(sdkEvt);
-            SdkQueueEvent responseForEvent = getSdkCallbackMgr().getResponseForEvent(sdkEventIdentifier);
+            SdkQueueEvent responseForEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
+                    .getResponseForEvent(sdkEventIdentifier);
             SDKResponse sdkResponse = responseForEvent.getSdkResponse();
 
             if (sdkResponse != null && !sdkResponse.isSuccess()) {
@@ -311,7 +291,8 @@ public class AbstractOtagServiceClient {
         try {
             String sdkEventIdentifier = sdkEvt.getSdkEventIdentifier();
             SdkQueueManager.sendEventToGateway(sdkEvt);
-            SdkQueueEvent responseForEvent = getSdkCallbackMgr().getResponseForEvent(sdkEventIdentifier);
+            SdkQueueEvent responseForEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
+                    .getResponseForEvent(sdkEventIdentifier);
             return SdkQueueEvent.extractBodyFromResponse(responseForEvent, type).orElse(null);
         } catch (InterruptedException e) {
             throw new APIException("client was interrupted waiting for response from sdk", e);
