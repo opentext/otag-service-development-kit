@@ -7,7 +7,7 @@
 
     <groupId>com.opentext.otag.sdk</groupId>
     <artifactId>otag-service-development-kit</artifactId>
-    <version>16.5.1</version>
+    <version>16.5.2</version>
     <packaging>jar</packaging>
 
     <name>Open Text AppWorks Gateway Service Developer Kit (SDK)</name>
@@ -28,7 +28,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.9.7</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <appworks.platform.version>16.3.0</appworks.platform.version>
         <fortify.project.version>16.4.0</fortify.project.version>
         <fortify.auth.token>auth-token-here</fortify.auth.token>
@@ -38,8 +38,6 @@
         </fortify.results.file>
         <fortify.log.file>${project.build.directory}/fortify-code-analysis/sca-scan.log</fortify.log.file>
         <fortify.source>1.8</fortify.source>
-
-        <nexus.base.url>http://appworks-re1.lab.opentext.com:8082/nexus</nexus.base.url>
     </properties>
 
     <profiles>

@@ -3,6 +3,7 @@
  */
 package com.opentext.otag.sdk.client.v3;
 
+import com.opentext.otag.sdk.SdkEventCallbackHandler;
 import com.opentext.otag.sdk.bus.SdkEventKeys;
 import com.opentext.otag.sdk.bus.SdkQueueEvent;
 import com.opentext.otag.sdk.bus.SdkQueueManager;
@@ -48,7 +49,8 @@ public class MailClient extends AbstractOtagServiceClient {
 
         try {
             SdkQueueManager.sendEventToGateway(sdkRequest);
-            SdkQueueEvent responseEvent = getSdkCallbackMgr().getResponseForEvent(sdkRequest.getSdkEventIdentifier());
+            SdkQueueEvent responseEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
+                    .getResponseForEvent(sdkRequest.getSdkEventIdentifier());
 
             SDKResponse sdkResponse = responseEvent.getSdkResponse();
 
@@ -87,7 +89,8 @@ public class MailClient extends AbstractOtagServiceClient {
 
         try {
             SdkQueueManager.sendEventToGateway(sdkRequest);
-            SdkQueueEvent responseEvent = getSdkCallbackMgr().getResponseForEvent(sdkRequest.getSdkEventIdentifier());
+            SdkQueueEvent responseEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
+                    .getResponseForEvent(sdkRequest.getSdkEventIdentifier());
             Optional<MailResult> mailResult = SdkQueueEvent.extractBodyFromResponse(responseEvent, MailResult.class);
             return mailResult.orElseThrow(() -> new APIException("Response body missing from SDK event"));
         } catch (InterruptedException e) {
