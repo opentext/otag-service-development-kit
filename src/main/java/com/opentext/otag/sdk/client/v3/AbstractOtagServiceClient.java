@@ -268,6 +268,7 @@ public class AbstractOtagServiceClient {
             SdkEventBusLog.info("SDK event id for new request to "  + sdkEvt.getSdkRequest().getEndpointId() +
                             " was " + sdkEventIdentifier);
 
+            SdkEventCallbackHandler.getSdkCallbackMgr().prepareForResponse(sdkEventIdentifier);
             SdkQueueManager.sendEventToGateway(sdkEvt);
             SdkQueueEvent responseForEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
                     .getResponseForEvent(sdkEventIdentifier);
@@ -290,6 +291,7 @@ public class AbstractOtagServiceClient {
     protected <T> T sendSdkEventAndGetTypedResponse(SdkQueueEvent sdkEvt, Class<T> type) {
         try {
             String sdkEventIdentifier = sdkEvt.getSdkEventIdentifier();
+            SdkEventCallbackHandler.getSdkCallbackMgr().prepareForResponse(sdkEventIdentifier);
             SdkQueueManager.sendEventToGateway(sdkEvt);
             SdkQueueEvent responseForEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
                     .getResponseForEvent(sdkEventIdentifier);
