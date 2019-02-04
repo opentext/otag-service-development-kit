@@ -259,7 +259,7 @@
         <dependency>
             <groupId>com.opentext.otag.sdk.bus</groupId>
             <artifactId>otag-sdk-bus</artifactId>
-            <version>16.5.3</version>
+            <version>16.5.4</version>
             <scope>provided</scope>
         </dependency>
 
