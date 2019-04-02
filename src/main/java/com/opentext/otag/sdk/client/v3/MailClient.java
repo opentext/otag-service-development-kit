@@ -47,10 +47,12 @@ public class MailClient extends AbstractOtagServiceClient {
         SdkRequest<MailRequest> request = new SdkRequest<>(SdkEventKeys.SEND_IMPORTANT_MAIL, mailRequest);
         SdkQueueEvent sdkRequest = SdkQueueEvent.request(request, getAppName(), getPersistenceContext());
 
+        String sdkEventIdentifier = sdkRequest.getSdkEventIdentifier();
         try {
+            SdkEventCallbackHandler.getSdkCallbackMgr().prepareForResponse(sdkEventIdentifier);
             SdkQueueManager.sendEventToGateway(sdkRequest);
             SdkQueueEvent responseEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
-                    .getResponseForEvent(sdkRequest.getSdkEventIdentifier());
+                    .getResponseForEvent(sdkEventIdentifier);
 
             SDKResponse sdkResponse = responseEvent.getSdkResponse();
 
@@ -87,10 +89,13 @@ public class MailClient extends AbstractOtagServiceClient {
         SdkRequest<MailRequest> request = new SdkRequest<>(endpointId, mailRequest);
         SdkQueueEvent sdkRequest = SdkQueueEvent.request(request, getAppName(), getPersistenceContext());
 
+        String sdkEventIdentifier = sdkRequest.getSdkEventIdentifier();
         try {
+            SdkEventCallbackHandler.getSdkCallbackMgr().prepareForResponse(sdkEventIdentifier);
+
             SdkQueueManager.sendEventToGateway(sdkRequest);
             SdkQueueEvent responseEvent = SdkEventCallbackHandler.getSdkCallbackMgr()
-                    .getResponseForEvent(sdkRequest.getSdkEventIdentifier());
+                    .getResponseForEvent(sdkEventIdentifier);
             Optional<MailResult> mailResult = SdkQueueEvent.extractBodyFromResponse(responseEvent, MailResult.class);
             return mailResult.orElseThrow(() -> new APIException("Response body missing from SDK event"));
         } catch (InterruptedException e) {
